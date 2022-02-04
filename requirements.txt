@@ -1,0 +1,3 @@
+vonage~=2.5.5
+aiohttp~=3.8.1
+pymyq~=3.1.4

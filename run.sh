@@ -1,0 +1,9 @@
+docker run -e MYQ_EMAIL=$MYQ_EMAIL \
+    -e MYQ_PASSWORD=$MYQ_PASSWORD \
+    -e MYQ_SMS_RECIPIENTS=$MYQ_SMS_RECIPIENTS \
+    -e MYQ_DATADIR=/data \
+    -e VONAGE_CLIENT_KEY=$VONAGE_CLIENT_KEY \
+    -e VONAGE_CLIENT_SECRET=$VONAGE_CLIENT_SECRET \
+    -e VONAGE_CLIENT_SMS_NUMBER=$VONAGE_CLIENT_SMS_NUMBER \
+    -v $HOME/data/myq-monitor:/data:Z \
+    --rm --name myq-monitor myq-monitor
