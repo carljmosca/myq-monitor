@@ -1,7 +1,5 @@
 name: "Build image"
 
-description: "build myq-monitor and push to github container registry"
-
 on:
   push:
     branches: [ master ]
