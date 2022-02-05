@@ -1,0 +1,43 @@
+name: "Build image"
+
+description: "build myq-monitor and push to github container registry"
+
+on:
+  push:
+    branches: [ master ]
+
+env:
+  IMAGE_NAME: myq-monitor
+
+jobs:
+  ghr_push:
+    name: build and push image
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: build image
+      uses: actions/checkout@v2
+      run: docker build src/poi/ --file dockerfiles/Dockerfile_3 --tag $IMAGE_NAME
+    - name: log in to github container registry
+      run: echo "${{ secrets.CR_PAT }}" | docker login https://ghcr.io -u ${{ github.actor }} --password-stdin
+    - name: push image to github container registry
+      run: |
+        IMAGE_ID=ghcr.io/${{ github.repository }}/$IMAGE_NAME
+
+        # Change all uppercase to lowercase
+        IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
+
+        # Strip git ref prefix from version
+        VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+        # Strip "v" prefix from tag name
+        [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+        # Use Docker `latest` tag convention
+        [ "$VERSION" == "master" ] && VERSION=latest
+
+        echo IMAGE_ID=$IMAGE_ID
+        echo VERSION=$VERSION
+
+        docker tag $IMAGE_NAME $IMAGE_ID:$VERSION
+        docker push $IMAGE_ID:$VERSION
