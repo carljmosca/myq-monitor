@@ -16,6 +16,7 @@ MYQ_EMAIL = os.environ['MYQ_EMAIL']
 MYQ_PASSWORD = os.environ['MYQ_PASSWORD']
 MYQ_DATADIR = os.environ['MYQ_DATADIR']
 MYQ_SMS_RECIPIENTS = os.environ['MYQ_SMS_RECIPIENTS']
+MYQ_SEND_ANY_STATUS = os.getenv("MYQ_SEND_ANY_STATUS", 'False').lower() in ('true', '1', 't')
 VONAGE_CLIENT_KEY = os.environ['VONAGE_CLIENT_KEY']
 VONAGE_CLIENT_SECRET = os.environ['VONAGE_CLIENT_SECRET']
 VONAGE_CLIENT_SMS_NUMBER = os.environ['VONAGE_CLIENT_SMS_NUMBER']
@@ -85,6 +86,7 @@ async def process_garagedoors(account: MyQAccount):
     if len(account.covers) != 0:
         for idx, device in enumerate(account.covers.values()):
             print(f" processing device {idx}")
+            sendNotification = MYQ_SEND_ANY_STATUS
             try:
                 lastknown_device_status = get_lastknown_device_status(
                     device)
@@ -99,7 +101,9 @@ async def process_garagedoors(account: MyQAccount):
                         set_lastknown_device_status(device)
                     else:
                         print(f"report status {device.device_state}")
-                        send_notification(device)
+                        sendNotification = True
+                if sendNotification:
+                    send_notification(device)
             except RequestError as err:
                 _LOGGER.error(err)
         print("  ------------------------------")
