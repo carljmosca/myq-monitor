@@ -92,16 +92,14 @@ async def process_garagedoors(account: MyQAccount):
                     device)
                 if device.state == STATE_CLOSED:
                     print(f"Garage door {device.name} is closed")
-                    if (lastknown_device_status == None or device.state != lastknown_device_status['device_state']):
+                    if (lastknown_device_status == None or device.device_state != lastknown_device_status['device_state']):
                         set_lastknown_device_status(device)
                 else:
                     print(
                         f"Garage door {device.name} is {device.device_state}")
-                    if (not hasattr(lastknown_device_status, "state") or device.state != lastknown_device_status.state):
+                    if (device.device_state != lastknown_device_status['device_state']):
                         set_lastknown_device_status(device)
-                    else:
-                        print(f"report status {device.device_state}")
-                        sendNotification = True
+                    sendNotification = True
                 if sendNotification:
                     send_notification(device)
             except RequestError as err:
