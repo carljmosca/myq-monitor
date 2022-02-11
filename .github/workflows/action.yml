@@ -6,7 +6,7 @@ on:
 
 env:
   IMAGE_NAME: myq-monitor
-  IMAGE_VERSION: "1.02"
+  IMAGE_VERSION: "1.03"
 
 jobs:
   ghr_push:
